@@ -18,5 +18,4 @@ def name_updater(request):
     update_request.start_date_time = timezone.now()
     update_request.save()
     update_request.start_update()
-    
     return JsonResponse({'pk': update_request.pk})
