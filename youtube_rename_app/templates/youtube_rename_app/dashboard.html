@@ -1,0 +1,85 @@
+{% extends 'youtube_rename_app/base.html' %}
+
+{% block content %}
+<div class = 'row'>
+    <alert id = 'error_occured_alert'class = 'alert alert-danger' style = 'display:none'> Error Occured while updating</alert>
+<button id = 'manual_update' class = 'btn btn-primary col-sm-6' onclick='manual_update()'>Manual Update</button>
+<div id='grow-spinner' style = 'display:none' class="spinner-grow" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<script> 
+function manual_update(){
+    
+    toggle_element_by_id("grow-spinner")
+    document.getElementById('manual_update').disabled = true
+    var pk =0;
+    $.ajax({
+                url: '{% url "name_updater" %}',
+                type: 'GET',
+                processData: false,
+                contentType: false,
+            }).then((data)=>{
+                var  pk = data['pk']
+               
+                $(function() {
+            const token = getCookie('csrftoken');
+            let posting = setInterval(() => {
+               
+                $.ajax({
+                    
+                    url: pk + '/name_updater_poll',
+                    type: 'GET',
+                    processData: false,
+                    contentType: false,
+                }).then((data) => {
+                    
+                    if(data['status'] == 'processing'){}
+                    else{document.getElementById('manual_update').disabled = false
+                    toggle_element_by_id("grow-spinner")
+                        clearInterval(posting)
+                    if(data['status'] == 'error'){
+                        document.getElementById('error_occured_alert').style.display = 'block'
+                    }
+                    else{
+
+                    }}
+                })
+            },100)
+
+        })
+
+        })
+    
+}
+function toggle_element(element){
+    var disp_val = element.style.display;
+    if (disp_val == 'none'){
+        element.style.display = 'block'
+    }
+    else{
+        element.style.display = 'none'
+    }
+}
+function toggle_element_by_id(id){
+    toggle_element(document.getElementById(id))
+}
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+
+{% endblock %}
