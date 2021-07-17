@@ -21,4 +21,4 @@ def get_charts_number_ones():
                     singles_number_one = songs['product_name'] + ' - ' + songs['artist_name']
                 list_of_songs.append(songs['product_name'] + ' - ' + songs['artist_name'])
     return (singles_number_one, list_of_songs)  
-main()  
+  
